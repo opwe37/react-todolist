@@ -1,24 +1,15 @@
 import logo from './logo.svg';
 import './App.css';
+import TodoContainer from './TodoContainer';
+import TodoHeader from './TodoHeader';
+import TodoInput from './TodoInput';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <TodoContainer>
+      <TodoHeader date="2021-07-14" week="수요일"></TodoHeader>
+      <TodoInput></TodoInput>
+    </TodoContainer>
   );
 }
 
