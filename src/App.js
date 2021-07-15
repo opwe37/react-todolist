@@ -4,37 +4,67 @@ import TodoHeader from './TodoHeader';
 import TodoInput from './TodoInput';
 import TodoList from './TodoList';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback, useReducer } from 'react';
+
+function createBulkTodos() {
+  const arr = [];
+  for (let i = 0; i < 2500; i++) {
+    arr.push({
+      id: i,
+      text: `할 일 ${i}`,
+      checked: false,
+    });
+  }
+  return arr;
+}
+
+function reducer(todos, action) {
+  switch (action.type) {
+    case 'Insert':
+      return todos.concat(action.todo);
+    case 'Remove':
+      return todos.filter(todo => todo.id != action.id);
+    case 'Toggle':
+      return todos.map(todo => todo.id == action.id ? {...todo, checked: !todo.checked} : todo);
+    default:
+      return todos;
+  }
+}
 
 function App() {
 
-  const [todo, setTodo] = useState([
-    { id: 0, text: 'Algorithm', checked: false },
-    { id: 1, text: 'Django', checked: false },
-    { id: 2, text: 'React', checked: false }
-  ]);
+  // [
+  //   { id: 0, text: 'Algorithm', checked: false },
+  //   { id: 1, text: 'Django', checked: false },
+  //   { id: 2, text: 'React', checked: false }
+  // ]
 
-  let todoId = useRef(3)
+  // useReducer(reducer, init) : init=>undefined, 최초 렌더링 시에 3번째 인자로 주어진 함수를 돌림
+  const [todos, dispatch] = useReducer(reducer, undefined, createBulkTodos);
 
-  const addTodo = (value) => {
-    const newItem = { id: todoId.current, text: value, checked: false };
-    setTodo(todo.concat(newItem));
+  let todoId = useRef(2501)
+
+  const addTodo = useCallback((value) => {
+    const todo = { id: todoId.current, text: value, checked: false };
+    // setTodo(todo => todo.concat(newItem));
+    dispatch({type: 'Insert', todo})
     todoId.current += 1;
-  }
+  }, []);
 
-  const checkTodo = (targetId) => {
-    setTodo( todo.map(item => 
-      item.id == targetId ? { ...item, checked: !item.checked } : item
-    ) );
-  }
+  const checkTodo = useCallback((id) => {
+    // setTodo(todo => todo.map(item => 
+    //   item.id == targetId ? { ...item, checked: !item.checked } : item
+    // ) );
+    dispatch({type: 'Toggle', id})
+  }, [])
 
-  const removeTodo = (targetId) => {
-    const newTodoList = todo.filter(item => item.id != targetId);
-    setTodo(newTodoList);
-  }
+  const removeTodo = useCallback((id) => {
+    // setTodo(todo => todo.filter(item => item.id != targetId));
+    dispatch({type: 'Remove', id})
+  }, [])
 
   const date = new Date();
-  let [month, day, year]       = [date.getMonth(), date.getDate(), date.getFullYear()];
+  let [month, day, year] = [date.getMonth(), date.getDate(), date.getFullYear()];
   month = Number(month) + 1;
   month = month < 10 ? '0' + String(month) : month
   const now = year + '.' + month + '.' + day;
@@ -56,7 +86,7 @@ function App() {
     <TodoContainer>
       <TodoHeader date={now} week={week}></TodoHeader>
       <TodoInput addTodo={addTodo}></TodoInput>
-      <TodoList contents={todo} onCheck={checkTodo} onRemove={removeTodo}/>
+      <TodoList contents={todos} onCheck={checkTodo} onRemove={removeTodo}/>
     </TodoContainer>
   );
 }
