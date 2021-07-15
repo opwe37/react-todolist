@@ -1,14 +1,39 @@
 .todo_input_container {
     display: flex;
-    height: 2.5rem;
+    background: #495057;
     
     border-bottom: 1px solid #e9ecef;
 
     input {
         flex: 1;
-        border: 1px solid #dee2e6;
+
+        border: none;
         outline: none;
-        box-sizing: border-box;
-        font-size: 15px;
+        background: none;
+
+        padding: 0.5rem;
+        font-size: 1.125rem;
+        line-height: 1.5;
+        color: white;
+        &::placeholder {
+            color: #dee2e6;
+        }
+    }
+
+    button {
+        background: #868e96;
+        outline: none;
+        border: none;
+        color: white;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        transition: 0.1s background ease-in;
+        &:hover {
+            background: #adb5bd;
+        }
     }
 }
